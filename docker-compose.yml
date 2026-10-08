@@ -1,0 +1,11 @@
+services:
+  anvil:
+    image: ghcr.io/foundry-rs/foundry:latest
+    container_name: eth-workshop-anvil
+    platform: linux/amd64
+    ports:
+      - "8545:8545"
+    # Foundry's image defaults to a non-shell entrypoint, so the command
+    # must be passed as a single string for it to reach anvil correctly.
+    entrypoint: anvil
+    command: --host 0.0.0.0
