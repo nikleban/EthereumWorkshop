@@ -8,4 +8,9 @@ services:
     # Foundry's image defaults to a non-shell entrypoint, so the command
     # must be passed as a single string for it to reach anvil correctly.
     entrypoint: anvil
-    command: --host 0.0.0.0
+    command: --host 0.0.0.0 --state /data/anvil-state.json
+    volumes:
+      - anvil-data:/data
+
+  volumes:
+    anvil-data:

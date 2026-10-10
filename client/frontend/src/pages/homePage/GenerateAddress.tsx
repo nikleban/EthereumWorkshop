@@ -7,39 +7,39 @@ import {
 } from "@/components/ui/field"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup, ButtonGroupText } from "@/components/ui/button-group"
-import { generateRandomPrivateKey } from "@blockchain/walletActions"
+import { generateRandomETHAddress } from "@blockchain/walletActions"
 
-export function GeneratePrivateKey() {
-  const [privateKey, setPrivateKey] = useState("")
+export function GenerateAddress() {
+  const [address, setAddress] = useState("")
   const [copied, setCopied] = useState(false)
 
   const generate = () => {
-    setPrivateKey(generateRandomPrivateKey())
+    setAddress(generateRandomETHAddress())
   }
 
   const copy = async () => {
-    if (!privateKey) return
-    await navigator.clipboard.writeText(privateKey)
+    if (!address) return
+    await navigator.clipboard.writeText(address)
     setCopied(true)
     setTimeout(() => setCopied(false), 1500)
   }
 
   return (
     <Field>
-      <FieldLabel htmlFor="generated-private-key">Generate Private Key</FieldLabel>
-      {privateKey ? (
+      <FieldLabel htmlFor="generated-address">Generate ETH Address</FieldLabel>
+      {address ? (
         <ButtonGroup>
           <ButtonGroupText
-            id="generated-private-key"
+            id="generated-address"
             className="flex-1 truncate font-mono"
           >
-            {privateKey}
+            {address}
           </ButtonGroupText>
           <Button
             type="button"
             variant="outline"
             size="icon"
-            aria-label="Copy private key"
+            aria-label="Copy address"
             onClick={copy}
           >
             {copied ? <CheckIcon /> : <CopyIcon />}
@@ -51,7 +51,7 @@ export function GeneratePrivateKey() {
         </Button>
       )}
       <FieldDescription>
-        Click to generate a brand new random private key
+        Click to generate a brand new random ETH address
       </FieldDescription>
     </Field>
   )
