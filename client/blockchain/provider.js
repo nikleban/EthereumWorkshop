@@ -1,11 +1,23 @@
 import { ethers } from "ethers";
-import { NETWORKS } from "@blockchain/networks";
+import { NETWORKS } from "./networks.js";
 
 const cache = {}
 
-export function getProvider(network) {
-  const { rpcUrl, chainId } = NETWORKS[network]
-  return (cache[network] ??= new ethers.JsonRpcProvider(rpcUrl, chainId, { staticNetwork: true }))
+// The frontend picks the network (NetworkContext calls setActiveNetwork);
+// wallet actions just call getProvider() and get the provider for it.
+let activeNetwork = "sepolia"
+
+export function setActiveNetwork(network) {
+  activeNetwork = network
+}
+
+export function getActiveNetwork() {
+  return activeNetwork
+}
+
+export function getProvider(network = activeNetwork) {
+  const { rpcUrl } = NETWORKS[network]
+  return (cache[network] ??= new ethers.JsonRpcProvider(rpcUrl, null, { staticNetwork: true }))
 }
 
 // Tese are funded in anvil docker locally, made for testing

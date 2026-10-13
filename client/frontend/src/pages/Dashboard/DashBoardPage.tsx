@@ -1,69 +1,42 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router"
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { DashBoardHeader } from "@/pages/Dashboard/DashBoardHeader";
 import { AddressOverview } from "@/pages/Dashboard/AddressOverview";
+import { AnalyticsBubble } from "@/pages/Dashboard/AnalyticsBubble";
 import { useNetwork } from "@/context/NetworkContext";
-import { getBalance, getTransactionCount, isEthAddressContract, sendEthTest } from "@blockchain/walletActions";
+import { addressKey, addressOverviewQuery } from "@/queries/addressQueries";
+import { NETWORKS } from "@blockchain/networks";
+import { sendEthTest } from "@blockchain/walletActions";
 
 
 export const DashBoardPage = () => {
-    const { ethAddress } = useParams()
-    const { network, provider } = useNetwork()
-    const [balance, setBalance] = useState<bigint | null>(null)
-    const [txCount, setTxCount] = useState<number | null>(null)
-    const [isContract, setIsContract] = useState<boolean | false>(false)
-    const [error, setError] = useState<string | null>(null)
-    // Bumped after a send so the effect below re-fetches
-    const [refreshKey, setRefreshKey] = useState(0)
+    const { ethAddress = "" } = useParams()
+    const { network } = useNetwork()
+    const queryClient = useQueryClient()
+    const overview = useQuery({ ...addressOverviewQuery(network, ethAddress), enabled: !!ethAddress })
 
-    const sendTestEth = async (amountWei: bigint) => {
-        if (!ethAddress) return
-        const transaction = await sendEthTest(provider, ethAddress, amountWei)
-        if (!transaction) throw new Error("No funded test account could send")
-        await transaction.wait()
-        setRefreshKey((key) => key + 1)
+    const sendTestEth = async (amountWei?: bigint) => {
+        // Resolves once the transaction is mined, on both local and Sepolia
+        await sendEthTest(ethAddress, amountWei)
+        // Balance, tx count and history all changed, refetch everything for this address
+        await queryClient.invalidateQueries({ queryKey: addressKey(network, ethAddress) })
     }
-
-    useEffect(() => {
-        if (!ethAddress) return
-
-        let ignore = false
-        setBalance(null)
-        setTxCount(null)
-        setError(null)
-
-        const load = async () => {
-            try {
-                const [balance, transactionCount, isContract] = await Promise.all([
-                    getBalance(provider, ethAddress),
-                    getTransactionCount(provider, ethAddress),
-                    isEthAddressContract(provider, ethAddress)
-                ])
-                if (ignore) return
-                setBalance(balance)
-                setTxCount(transactionCount)
-                setIsContract(isContract)
-            } catch (e) {
-                if (!ignore) setError(e instanceof Error ? e.message : String(e))
-            }
-        }
-        load()
-
-        return () => { ignore = true }
-    }, [provider, ethAddress, refreshKey])
 
     return (
         <div>
             <DashBoardHeader />
             <main className="px-20 py-6 text-left">
-                {ethAddress && <AddressOverview ethAddress={ethAddress} balance={balance} isContract={isContract}
-                    onSendTestEth={network === "sepolia" ? sendTestEth : undefined} />}
-                {error ? (
-                    <p className="text-red-500">{error}</p>
+                {ethAddress && <AddressOverview ethAddress={ethAddress}
+                    balance={overview.data?.balance ?? null}
+                    isContract={overview.data?.isContract ?? false}
+                    onSendTestEth={NETWORKS[network]?.canFaucet ? sendTestEth : undefined} />}
+                {overview.isError ? (
+                    <p className="text-red-500">{overview.error.message}</p>
                 ) : (
-                    <p>Transactions sent: {txCount === null ? "Loading…" : txCount}</p>
+                    <p>Transactions sent: {overview.data?.txCount ?? "Loading…"}</p>
                 )}
-                {/* <AnalyticsBubble />
+                {ethAddress && <AnalyticsBubble ethAddress={ethAddress}/>}
+                {/*
                 <BalanceGraph />
                 <AccountDetails />
                 <TransactionHistory /> */}

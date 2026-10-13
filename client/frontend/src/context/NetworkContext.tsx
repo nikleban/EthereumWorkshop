@@ -1,24 +1,32 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react"
-import type { JsonRpcProvider } from "ethers"
-import { getProvider } from "@blockchain/provider"
+import { createContext, useContext, useState, type ReactNode } from "react"
+import { setActiveNetwork } from "@blockchain/provider"
 
-export type Network = "mainnet" | "sepolia"
+// "local" (Anvil) only exists in dev, see NETWORKS in networks.js
+export type Network = "mainnet" | "sepolia" | "local"
 
 type NetworkCtx = {
   network: Network
   setNetwork: (network: Network) => void
-  provider: JsonRpcProvider
 }
 
 const NetworkContext = createContext<NetworkCtx | null>(null)
 
 export function NetworkProvider({ children }: { children: ReactNode }) {
   // Default to the testnet so nothing touches mainnet by accident
-  const [network, setNetwork] = useState<Network>("sepolia")
-  const provider = useMemo(() => getProvider(network), [network])
+  const [network, setNetworkState] = useState<Network>(() => {
+    setActiveNetwork("sepolia")
+    return "sepolia"
+  })
+
+  // Update provider.js before React re-renders, so children's effects
+  // that refetch on `network` already see the new provider
+  const setNetwork = (next: Network) => {
+    setActiveNetwork(next)
+    setNetworkState(next)
+  }
 
   return (
-    <NetworkContext.Provider value={{ network, setNetwork, provider }}>
+    <NetworkContext.Provider value={{ network, setNetwork }}>
       {children}
     </NetworkContext.Provider>
   )

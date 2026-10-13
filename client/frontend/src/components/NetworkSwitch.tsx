@@ -1,19 +1,24 @@
-import { Field, FieldLabel } from "@/components/ui/field"
-import { Switch } from "@/components/ui/switch"
-import { useNetwork } from "@/context/NetworkContext"
+import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import { useNetwork, type Network } from "@/context/NetworkContext"
+import { NETWORKS } from "@blockchain/networks"
 
+// One button per entry in NETWORKS, so "local" shows up in dev only
 export function NetworkSwitch() {
   const { network, setNetwork } = useNetwork()
 
   return (
-    <Field orientation="horizontal" className="w-fit">
-      <FieldLabel htmlFor="network-switch">eth-mainnet</FieldLabel>
-      <Switch
-        id="network-switch"
-        checked={network === "sepolia"}
-        onCheckedChange={(checked) => setNetwork(checked ? "sepolia" : "mainnet")}
-      />
-      <FieldLabel htmlFor="network-switch">eth-sepolia</FieldLabel>
-    </Field>
+    <ButtonGroup>
+      {Object.entries(NETWORKS).map(([key, { label }]) => (
+        <Button
+          key={key}
+          size="sm"
+          variant={network === key ? "default" : "outline"}
+          onClick={() => setNetwork(key as Network)}
+        >
+          {label}
+        </Button>
+      ))}
+    </ButtonGroup>
   )
 }

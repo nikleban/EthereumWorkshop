@@ -12,5 +12,5 @@ services:
     volumes:
       - anvil-data:/data
 
-  volumes:
-    anvil-data:
+volumes:
+  anvil-data:

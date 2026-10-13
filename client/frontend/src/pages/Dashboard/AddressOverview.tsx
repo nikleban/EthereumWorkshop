@@ -10,7 +10,7 @@ type AddressOverviewProps = {
     balance: bigint | null
     isContract: boolean
     // Only passed on the testnet; the send form is hidden without it
-    onSendTestEth?: (amountWei: bigint) => Promise<void>
+    onSendTestEth?: (amountWei?: bigint) => Promise<void>
 }
 
 export const AddressOverview = ({ ethAddress, balance, isContract, onSendTestEth }: AddressOverviewProps) => {
@@ -24,7 +24,7 @@ export const AddressOverview = ({ ethAddress, balance, isContract, onSendTestEth
 
     return (
         <div>
-            <div className="gap-5">
+            <div className="flex items-center gap-3">
                 {isContract ? <Badge className="border-gray-200 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200" variant="outline"><CheckIcon />Is Contract</Badge>
                 : <Badge className="border-gray-200 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200" variant="outline"><CheckIcon />Is Externally owned</Badge>}
                 {!!balance && <Badge className="bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" variant="secondary"><CheckIcon />Is active</Badge>}
@@ -35,7 +35,7 @@ export const AddressOverview = ({ ethAddress, balance, isContract, onSendTestEth
                         <p className="font-bold text-lg">{ethAddress}</p>
                         <Button onClick={copy} variant="outline">{copied ? <CheckIcon /> : <CopyIcon />}copy</Button>
                     </div>
-                    <p>Balance: {balance === null ? "Loading…" : `${formatEther(balance)} ETH`}</p>
+                    <p>Balance: {balance === null ? "Loading…" : `${formatEther(balance)} ETH (${balance} in wei)`}</p>
                 </div>
                 {onSendTestEth && <SendTestEth onSend={onSendTestEth} />}
             </div>

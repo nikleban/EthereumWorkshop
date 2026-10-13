@@ -14,4 +14,9 @@ export default defineConfig({
       '@blockchain': path.resolve(__dirname, '../blockchain'),
     },
   },
+  server: {
+    proxy: {
+      "/api": "http://localhost:3000",
+    },
+  },
 })
