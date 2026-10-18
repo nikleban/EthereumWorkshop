@@ -3,6 +3,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { DashBoardHeader } from "@/pages/Dashboard/DashBoardHeader";
 import { AddressOverview } from "@/pages/Dashboard/AddressOverview";
 import { AnalyticsBubble } from "@/pages/Dashboard/AnalyticsBubble";
+import { BalanceGraph } from "@/pages/Dashboard/BalanceGraph";
+import { AccountDetails } from "@/pages/Dashboard/AccountDetails";
 import { useNetwork } from "@/context/NetworkContext";
 import { addressKey, addressOverviewQuery } from "@/queries/addressQueries";
 import { NETWORKS } from "@blockchain/networks";
@@ -36,8 +38,16 @@ export const DashBoardPage = () => {
                     <p>Transactions sent: {overview.data?.txCount ?? "Loading…"}</p>
                 )}
                 {ethAddress && <AnalyticsBubble ethAddress={ethAddress}/>}
+                {ethAddress && 
+                <div className="flex gap-4 mt-5">
+                        <div className="flex-[7] min-w-0">
+                        <BalanceGraph ethAddress={ethAddress}/>
+                    </div>
+                    <div className="flex-[3] min-w-0">
+                        <AccountDetails ethAddress={ethAddress}/>
+                    </div>
+                </div>}
                 {/*
-                <BalanceGraph />
                 <AccountDetails />
                 <TransactionHistory /> */}
             </main>
