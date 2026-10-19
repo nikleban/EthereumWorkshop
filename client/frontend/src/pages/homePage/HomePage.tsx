@@ -18,7 +18,7 @@ export function HomePage() {
         <div className="flex min-h-svh w-full items-center justify-center p-6">
         <Card className="w-full max-w-xl">
             <CardHeader>
-            <CardTitle className="text-xl">Ethereum Wallet Playground</CardTitle>
+            <CardTitle className="text-xl">Ethereum Address dashboard</CardTitle>
             <CardDescription>
                 Insert an existing ETH address, or generate a new one to get started.
             </CardDescription>

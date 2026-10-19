@@ -5,6 +5,7 @@ import { AddressOverview } from "@/pages/Dashboard/AddressOverview";
 import { AnalyticsBubble } from "@/pages/Dashboard/AnalyticsBubble";
 import { BalanceGraph } from "@/pages/Dashboard/BalanceGraph";
 import { AccountDetails } from "@/pages/Dashboard/AccountDetails";
+import { TransactionHistory } from "@/pages/Dashboard/transactions/TransactionHistory";
 import { useNetwork } from "@/context/NetworkContext";
 import { addressKey, addressOverviewQuery } from "@/queries/addressQueries";
 import { NETWORKS } from "@blockchain/networks";
@@ -32,24 +33,20 @@ export const DashBoardPage = () => {
                     balance={overview.data?.balance ?? null}
                     isContract={overview.data?.isContract ?? false}
                     onSendTestEth={NETWORKS[network]?.canFaucet ? sendTestEth : undefined} />}
-                {overview.isError ? (
-                    <p className="text-red-500">{overview.error.message}</p>
-                ) : (
-                    <p>Transactions sent: {overview.data?.txCount ?? "Loading…"}</p>
-                )}
                 {ethAddress && <AnalyticsBubble ethAddress={ethAddress}/>}
                 {ethAddress && 
                 <div className="flex gap-4 mt-5">
-                        <div className="flex-[7] min-w-0">
+                        <div className="flex-[65] min-w-0">
                         <BalanceGraph ethAddress={ethAddress}/>
                     </div>
-                    <div className="flex-[3] min-w-0">
+                    <div className="flex-[35] min-w-0">
                         <AccountDetails ethAddress={ethAddress}/>
                     </div>
                 </div>}
-                {/*
-                <AccountDetails />
-                <TransactionHistory /> */}
+                {ethAddress && 
+                <div className="mt-5">
+                    <TransactionHistory ethAddress={ethAddress} />
+                </div>}
             </main>
         </div>
     )

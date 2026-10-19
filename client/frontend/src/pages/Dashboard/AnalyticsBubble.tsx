@@ -23,7 +23,7 @@ export const AnalyticsBubble = ({ethAddress}: AnalyticsBubbleProps) => {
         for (const transaction of transactions) {
             if (transaction.asset === "ETH") totalEth += transaction.value;
         }
-        return totalEth.toLocaleString(undefined, { maximumFractionDigits: 4 });
+        return totalEth.toLocaleString(undefined, { maximumFractionDigits: 6 });
     };
 
     const getUniqueAddresses = (transactions: any[]) => {

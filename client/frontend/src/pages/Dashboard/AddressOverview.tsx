@@ -35,7 +35,7 @@ export const AddressOverview = ({ ethAddress, balance, isContract, onSendTestEth
                         <p className="font-bold text-lg">{ethAddress}</p>
                         <Button onClick={copy} variant="outline">{copied ? <CheckIcon /> : <CopyIcon />}copy</Button>
                     </div>
-                    <p>Balance: {balance === null ? "Loading…" : `${formatEther(balance)} ETH (${balance} in wei)`}</p>
+                    <p className="text-[#8A8A8A]">Balance: {balance === null ? "Loading…" : `${Number(formatEther(balance)).toLocaleString(undefined, { maximumFractionDigits: 6 })} ETH (${balance} in wei)`}</p>
                 </div>
                 {onSendTestEth && <SendTestEth onSend={onSendTestEth} />}
             </div>

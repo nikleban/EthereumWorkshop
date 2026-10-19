@@ -43,7 +43,7 @@ const getBalancePoints = (transactions: any[], ethAddress: string): BalancePoint
 
         const day = new Date(transaction.metadata.blockTimestamp);
         day.setHours(0, 0, 0, 0);
-        balanceByDay.set(day.getTime(), Number(balance.toFixed(4)));
+        balanceByDay.set(day.getTime(), Number(balance.toFixed(15)));
     }
     return Array.from(balanceByDay, ([time, balance]) => ({ time, balance }));
 };

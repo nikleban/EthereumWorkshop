@@ -10,7 +10,7 @@ export const DashBoardHeader = () => {
             <header className="grid grid-cols-[1fr_auto_1fr] items-center gap-6 px-8 py-4">
                 <div className="flex items-center gap-3 justify-self-start">
                     <img src={ethLogo} alt="Ethereum logo" className="h-6 w-6" />
-                    <p className="font-bold">Ethereum Wallet Playground</p>
+                    <p className="font-bold">Ethereum Address dashboard</p>
                 </div>
                 <InputGroup className="w-100">
                     <InputGroupInput placeholder="0x..." />
