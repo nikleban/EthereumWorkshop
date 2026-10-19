@@ -75,12 +75,14 @@ export const getTransactionHistory = async (ethAddress) => {
     const provider = getProvider();
     const network = getActiveNetwork();
     if (network === "local") {
-        // get local transactions logic
+        const { fromResults, toResults } = await getTransactionHistoryLocally(provider, ethAddress);
+        return { fromCount: fromResults.length, toCount: toResults.length, fromTransactions: fromResults, toTransactions: toResults };
     } else {
         const params = {
             withMetadata: true,
         }
-        if (Number(network.chainId) === SEPOLIA_CHAIN_ID) {
+        // getActiveNetwork() returns the key ("sepolia"), not the network object
+        if (network === "sepolia") {
             params["category"] = ["erc721", "erc1155", "external"]
         } else {
             params["category"] = ["erc721", "erc1155", "external", "internal"]
@@ -88,20 +90,50 @@ export const getTransactionHistory = async (ethAddress) => {
         const fromParams = {...params, "fromAddress": ethAddress};
         const fromResults =await getTransactionHistoryAlchemy(fromParams, provider);
         const toParams = {...params, "toAddress": ethAddress};
-        const toResults = await getTransactionHistoryAlchemy(fromParams, provider);
+        const toResults = await getTransactionHistoryAlchemy(toParams, provider);
 
-        return { fromCount: fromResults.length, toCount: toResults.length, fromTransaction: fromResults, toTransactions: toResults };
+        return { fromCount: fromResults.length, toCount: toResults.length, fromTransactions: fromResults, toTransactions: toResults };
     }
 }
 
-const getTransactionHistoryAlchemy = async (fromParams, provider) => {
+const getTransactionHistoryAlchemy = async (params, provider) => {
     let allResults = [];
     while(true) {
-        const response = await provider.send("alchemy_getAssetTransfers", [fromParams]);
-        console.log(response)
+        const response = await provider.send("alchemy_getAssetTransfers", [params]);
         allResults = allResults.concat(response?.transfers);
         if (!response?.pageKey) break;
-        fromParams["pageKey"] = response.pageKey;
+        params["pageKey"] = response.pageKey;
     }
     return allResults;
+}
+
+// Anvil has no indexer, so scan every block. Fine locally: the chain only has
+// as many blocks as transactions sent. Results use the alchemy_getAssetTransfers
+// shape so the dashboard works the same on every network.
+// Misses internal transfers (ETH sent by contracts), which aren't in the block's tx list.
+const getTransactionHistoryLocally = async (provider, ethAddress) => {
+    const me = ethAddress.toLowerCase();
+    const blockNumber = await provider.getBlockNumber();
+
+    const blockNumbers = Array.from({ length: blockNumber + 1 }, (_, i) => i);
+    const blocks = await Promise.all(blockNumbers.map((i) => provider.getBlock(i, true)));
+
+    const fromResults = [];
+    const toResults = [];
+    for (const block of blocks) {
+        for (const transaction of block?.prefetchedTransactions ?? []) {
+            const transfer = {
+                hash: transaction.hash,
+                from: transaction.from.toLowerCase(),
+                to: transaction.to?.toLowerCase() ?? null,
+                value: Number(formatEther(transaction.value)),
+                asset: "ETH",
+                category: "external",
+                metadata: { blockTimestamp: new Date(block.timestamp * 1000).toISOString() },
+            };
+            if (transfer.from === me) fromResults.push(transfer);
+            if (transfer.to === me) toResults.push(transfer);
+        }
+    }
+    return { fromResults, toResults };
 }
