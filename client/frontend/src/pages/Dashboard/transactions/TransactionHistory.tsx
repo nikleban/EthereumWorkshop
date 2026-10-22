@@ -8,6 +8,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@/components/ui/toggle-group"
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Filter = "all" | Transaction["type"]
 
@@ -45,7 +46,17 @@ export const TransactionHistory = ({ethAddress}: TransactionHistoryProps) => {
     );
 
     if (isError) return <p className="text-red-500">{error.message}</p>
-    if (isPending) return <p>Loading history…</p>
+    if (isPending) return (
+        <div className="bg-[#171717] border rounded-lg h-full p-2 space-y-2">
+            <div className="flex justify-between">
+                <Skeleton className="h-5 w-36" />
+                <Skeleton className="h-8 w-48" />
+            </div>
+            {Array.from({ length: 5 }, (_, i) => (
+                <Skeleton key={i} className="h-10 w-full" />
+            ))}
+        </div>
+    )
 
     return (
         <div className="bg-[#171717] border rounded-lg h-full">

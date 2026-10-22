@@ -10,6 +10,7 @@ import { useNetwork } from "@/context/NetworkContext";
 import { addressKey, addressOverviewQuery } from "@/queries/addressQueries";
 import { NETWORKS } from "@blockchain/networks";
 import { sendEthTest } from "@blockchain/walletActions";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 export const DashBoardPage = () => {
@@ -29,24 +30,34 @@ export const DashBoardPage = () => {
         <div>
             <DashBoardHeader />
             <main className="px-20 py-6 text-left">
-                {ethAddress && <AddressOverview ethAddress={ethAddress}
-                    balance={overview.data?.balance ?? null}
-                    isContract={overview.data?.isContract ?? false}
-                    onSendTestEth={NETWORKS[network]?.canFaucet ? sendTestEth : undefined} />}
-                {ethAddress && <AnalyticsBubble ethAddress={ethAddress}/>}
-                {ethAddress && 
+                {overview.isError ? (
+                    <p className="text-red-500">{overview.error.message}</p>
+                ) : overview.isPending ? (
+                    <div className="space-y-3">
+                        <Skeleton className="h-6 w-48" />
+                        <Skeleton className="h-7 w-[420px]" />
+                        <Skeleton className="h-5 w-72" />
+                    </div>
+                ) : (
+                    <AddressOverview
+                        ethAddress={ethAddress}
+                        balance={overview.data.balance}
+                        isContract={overview.data.isContract}
+                        onSendTestEth={NETWORKS[network]?.canFaucet ? sendTestEth : undefined}
+                    />
+                )}
+                <AnalyticsBubble ethAddress={ethAddress} />
                 <div className="flex gap-4 mt-5">
-                        <div className="flex-[65] min-w-0">
-                        <BalanceGraph ethAddress={ethAddress}/>
+                    <div className="flex-[65] min-w-0">
+                        <BalanceGraph ethAddress={ethAddress} />
                     </div>
                     <div className="flex-[35] min-w-0">
-                        <AccountDetails ethAddress={ethAddress}/>
+                        <AccountDetails ethAddress={ethAddress} />
                     </div>
-                </div>}
-                {ethAddress && 
+                </div>
                 <div className="mt-5">
                     <TransactionHistory ethAddress={ethAddress} />
-                </div>}
+                </div>
             </main>
         </div>
     )

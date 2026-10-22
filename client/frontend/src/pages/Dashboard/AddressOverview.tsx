@@ -7,7 +7,7 @@ import { SendTestEth } from "@/pages/Dashboard/SendTestEth";
 
 type AddressOverviewProps = {
     ethAddress: string
-    balance: bigint | null
+    balance: bigint
     isContract: boolean
     // Only passed on the testnet; the send form is hidden without it
     onSendTestEth?: (amountWei?: bigint) => Promise<void>
@@ -35,7 +35,7 @@ export const AddressOverview = ({ ethAddress, balance, isContract, onSendTestEth
                         <p className="font-bold text-lg">{ethAddress}</p>
                         <Button onClick={copy} variant="outline">{copied ? <CheckIcon /> : <CopyIcon />}copy</Button>
                     </div>
-                    <p className="text-[#8A8A8A]">Balance: {balance === null ? "Loading…" : `${Number(formatEther(balance)).toLocaleString(undefined, { maximumFractionDigits: 6 })} ETH (${balance} in wei)`}</p>
+                    <p className="text-[#8A8A8A]">Balance: {Number(formatEther(balance)).toLocaleString(undefined, { maximumFractionDigits: 6 })} ETH ({balance.toString()} in wei)</p>
                 </div>
                 {onSendTestEth && <SendTestEth onSend={onSendTestEth} />}
             </div>

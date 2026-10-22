@@ -5,6 +5,7 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { transactionHistoryQuery } from "@/queries/addressQueries";
 import { useQuery } from "@tanstack/react-query";
 import { useNetwork } from "@/context/NetworkContext";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type BalanceGraphProps = {
     ethAddress: string,
@@ -69,7 +70,15 @@ export const BalanceGraph = ({ethAddress}: BalanceGraphProps) => {
     const [range, setRange] = useState<Range>("30D")
 
     if (isError) return <p className="text-red-500">{error.message}</p>
-    if (isPending || !data) return <p>Loading history…</p>
+    if (isPending) return (
+        <div className="bg-[#171717] border border-[#2a2a2a] rounded-lg p-5 h-full space-y-4">
+            <div className="flex items-center justify-between">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-8 w-36" />
+            </div>
+            <Skeleton className="h-[300px] w-full" />
+        </div>
+    )
 
     const allPoints = getBalancePoints(data.fromTransactions.concat(data.toTransactions), ethAddress);
     const points = getPointsInRange(allPoints, RANGES[range]);

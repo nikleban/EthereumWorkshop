@@ -2,6 +2,7 @@ import { useNetwork } from "@/context/NetworkContext";
 import { transactionHistoryQuery } from "@/queries/addressQueries";
 import { useQuery } from "@tanstack/react-query";
 import { addressOverviewQuery } from "@/queries/addressQueries";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 type AccountDetailsProps = {
@@ -15,7 +16,19 @@ export const AccountDetails = ({ethAddress}: AccountDetailsProps) => {
     
     if (history.isError) return <p className="text-red-500">{history.error.message}</p>
     if (overview.isError) return <p className="text-red-500">{overview.error.message}</p>
-    if (history.isPending || overview.isPending) return <p>Loading…</p>
+    if (history.isPending || overview.isPending) return (
+        <div className="bg-[#171717] border border-[#2a2a2a] rounded-lg h-full p-2 flex flex-col">
+            <Skeleton className="h-5 w-32" />
+            <div className="divide-y divide-[#2a2a2a] grid grid-rows-6 flex-1">
+                {Array.from({ length: 6 }, (_, i) => (
+                    <div key={i} className="flex items-center justify-between gap-4 px-3">
+                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-4 w-36" />
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
 
     const existsText = overview.data.balance || overview.data.txCount > 0 ? "Yes, has on-chain state" : "No, it doesn't exist";
     const isExternalAccountText = overview.data.isContract ? "Contract code, not an EOA" : "EOA, not a contract";
