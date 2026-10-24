@@ -10,5 +10,8 @@
     "hardhat": "^3.21.0",
     "typescript": "~6.0.3",
     "viem": "^2.57.10"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.9"
   }
 }
