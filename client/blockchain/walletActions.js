@@ -1,12 +1,12 @@
-import { ethers, randomBytes, SigningKey, formatEther, computeAddress, Wallet } from "ethers";
-import { FUNDED_ETH_PRIVATE_KEYS, getProvider, getActiveNetwork } from "./provider.js";
+import { ethers, randomBytes, formatEther, computeAddress, Wallet, Contract } from "ethers";
+import { FUNDED_ETH_PRIVATE_KEYS, getProvider, getBrowserProvider, getActiveNetwork } from "./provider.js";
+import { COMMUNITY_COUNTER_ABI, COMMUNITY_COUNTER_ADDRESSES } from "./communityCounter.js";
 import { DOCKER_CHAIN_ID, SEPOLIA_CHAIN_ID } from "./networks.js";
 import axios from "axios";
 
 
 export const generateRandomPrivateKey = () =>{
     const privateKey = ethers.hexlify(randomBytes(32));
-    const wallet = new Wallet(privateKey)
     return privateKey
 }
 
@@ -36,7 +36,6 @@ export const isEthAddressContract = async (ethAddress) => {
 export const sendEthTest = async (ethAddress, amount) => {
     const provider = getProvider();
     const network = await provider.getNetwork()
-    console.log(network.chainId);
     if (Number(network.chainId) === DOCKER_CHAIN_ID) {
         return await sendEthLocally(ethAddress, amount);
     } else if (Number(network.chainId) === SEPOLIA_CHAIN_ID){
@@ -71,7 +70,6 @@ const sendEthLocally = async (ethAddress, amount) => {
 }
 
 export const getTransactionHistory = async (ethAddress) => {
-    console.log(ethAddress)
     const provider = getProvider();
     const network = getActiveNetwork();
     if (network === "local") {
@@ -136,4 +134,16 @@ const getTransactionHistoryLocally = async (provider, ethAddress) => {
         }
     }
     return { fromResults, toResults };
+}
+
+
+export const connectWallet = async () => {
+    if (!window.ethereum) throw Error("Wallet not found");
+    const provider = await getBrowserProvider(window.ethereum);
+    const network = getActiveNetwork();
+
+    const signer = await provider.getSigner();
+    
+    const contract = new Contract(COMMUNITY_COUNTER_ADDRESSES[network], COMMUNITY_COUNTER_ABI, signer)
+    return contract;
 }

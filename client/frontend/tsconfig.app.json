@@ -3,7 +3,8 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "paths": {
       "@/*": ["./src/*"],
-      "@blockchain/*": ["../blockchain/*"]
+      "@blockchain/*": ["../blockchain/*"],
+      "@contracts/*": ["../../contracts/contracts/*"]
     },
     "target": "es2023",
     "lib": ["ES2023", "DOM"],

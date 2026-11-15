@@ -12,6 +12,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@blockchain': path.resolve(__dirname, '../blockchain'),
+      '@contracts': path.resolve(__dirname, '../../contracts/contracts'),
     },
   },
   server: {

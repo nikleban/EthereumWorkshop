@@ -1,6 +1,7 @@
+import { useState } from "react"
 import { useParams } from "react-router"
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { DashBoardHeader } from "@/pages/Dashboard/DashBoardHeader";
+import { DashBoardHeader, type Page } from "@/pages/Dashboard/DashBoardHeader";
 import { AddressOverview } from "@/pages/Dashboard/AddressOverview";
 import { AnalyticsBubble } from "@/pages/Dashboard/AnalyticsBubble";
 import { BalanceGraph } from "@/pages/Dashboard/BalanceGraph";
@@ -11,11 +12,13 @@ import { addressKey, addressOverviewQuery } from "@/queries/addressQueries";
 import { NETWORKS } from "@blockchain/networks";
 import { sendEthTest } from "@blockchain/walletActions";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SmartContractPage } from "@/pages/SmartContract/SmartContractPage";
 
 
 export const DashBoardPage = () => {
     const { ethAddress = "" } = useParams()
     const { network } = useNetwork()
+    const [page, setPage] = useState<Page>("dashboard")
     const queryClient = useQueryClient()
     const overview = useQuery({ ...addressOverviewQuery(network, ethAddress), enabled: !!ethAddress })
 
@@ -28,7 +31,8 @@ export const DashBoardPage = () => {
 
     return (
         <div>
-            <DashBoardHeader />
+            <DashBoardHeader page={page} onPageChange={setPage} />
+            {page === "dashboard" ? (
             <main className="px-20 py-6 text-left">
                 {overview.isError ? (
                     <p className="text-red-500">{overview.error.message}</p>
@@ -59,6 +63,10 @@ export const DashBoardPage = () => {
                     <TransactionHistory ethAddress={ethAddress} />
                 </div>
             </main>
+            ) : (
+                // key resets the page (contract address, log) when the network changes
+                <SmartContractPage key={network} ethAddress={ethAddress} />
+            )}
         </div>
     )
 };

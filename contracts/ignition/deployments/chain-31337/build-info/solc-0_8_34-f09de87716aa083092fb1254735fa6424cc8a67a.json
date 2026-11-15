@@ -1,0 +1,49 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_34-f09de87716aa083092fb1254735fa6424cc8a67a",
+  "solcVersion": "0.8.34",
+  "solcLongVersion": "0.8.34+commit.80d5c536",
+  "compilerType": "solc",
+  "toolVersions": {
+    "hardhat": "3.21.0"
+  },
+  "userSourceNameMap": {
+    "contracts/CommunityCounter.sol": "project/contracts/CommunityCounter.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "osaka",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode.linkReferences",
+            "evm.bytecode.object",
+            "evm.bytecode.opcodes",
+            "evm.bytecode.sourceMap",
+            "evm.deployedBytecode.immutableReferences",
+            "evm.deployedBytecode.linkReferences",
+            "evm.deployedBytecode.object",
+            "evm.deployedBytecode.opcodes",
+            "evm.deployedBytecode.sourceMap",
+            "evm.methodIdentifiers"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/CommunityCounter.sol": {
+        "content": "// SPDX-License-Identifier: UNLICENSED\npragma solidity ^0.8.34;\n\ncontract CommunityCounter {\n    address public communityLeader;\n    uint public counter = 0;\n    uint public wallet = 0;\n    mapping(address => bool) public userIsInCommunity;\n\n\n    constructor(address leader) {\n        communityLeader = leader;        \n    }\n\n    function joinCommunity() public {\n        require(!userIsInCommunity[msg.sender], \"User is already in the community\");\n        userIsInCommunity[msg.sender] = true;\n        counter += 1;\n    }\n    \n    function leaveCommunity() public {\n        require(userIsInCommunity[msg.sender], \"User is not in the community\");\n        userIsInCommunity[msg.sender] = false;\n        counter -= 1;\n    }\n\n    function getCommunityCount() view public returns (uint) {\n        return counter;\n    }\n\n    function donateToCommunity() payable public {\n        require(msg.value > 0, \"Value should be more than 0\");\n        wallet += msg.value;\n    }\n\n\n    function withdrawFundsFromCommunity() public {\n        require(msg.sender == communityLeader, \"No one but community leader can withdraw :)\");\n        require(wallet > 0, \"Value should be more than 0\");\n\n        uint amount = wallet;\n        wallet = 0;\n\n        (bool ok, ) = communityLeader.call{value: amount}(\"\");\n        require(ok, \"Transfer failed\");\n    }\n\n}"
+      }
+    }
+  }
+}

@@ -55,3 +55,12 @@ After setting the variable, you can run the deployment with the Sepolia network:
 ```shell
 npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
 ```
+
+How to cast call a smart contract
+docker ps
+docker exec container_name cast call 0x5FbDB2315678afecb367f032d93F642f64180aa3 "communityLeader()(address)" --rpc-url http://127.0.0.1:8545
+
+fol local deploying
+```shell
+npx hardhat ignition deploy ignition/modules/CommunityCounter.ts --network local
+```

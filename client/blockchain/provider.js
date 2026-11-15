@@ -1,7 +1,9 @@
 import { ethers } from "ethers";
 import { NETWORKS } from "./networks.js";
 
-const cache = {}
+const providerCache = {}
+const browserProviderCache = {}
+
 
 // The frontend picks the network (NetworkContext calls setActiveNetwork);
 // wallet actions just call getProvider() and get the provider for it.
@@ -17,7 +19,11 @@ export function getActiveNetwork() {
 
 export function getProvider(network = activeNetwork) {
   const { rpcUrl } = NETWORKS[network]
-  return (cache[network] ??= new ethers.JsonRpcProvider(rpcUrl, null, { staticNetwork: true }))
+  return (providerCache[network] ??= new ethers.JsonRpcProvider(rpcUrl, undefined, { staticNetwork: true }))
+}
+
+export function getBrowserProvider(walletObj, network = activeNetwork) {
+  return(browserProviderCache[network] ??= new ethers.BrowserProvider(walletObj, undefined, { staticNetwork: true }))
 }
 
 // Tese are funded in anvil docker locally, made for testing
