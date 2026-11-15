@@ -16,7 +16,7 @@ export const COMMUNITY_COUNTER_ABI = [
 
 export const COMMUNITY_COUNTER_ADDRESSES = {
     local: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-    sepolia: null,
+    sepolia: "0x11441FC4312938AaF02EcBE4373A2395cE2b7c4B",
     mainnet: null,
 };
 
