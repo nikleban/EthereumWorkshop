@@ -1,13 +1,10 @@
 // In Node there is no window, so fall back to the local server's origin
 const origin = globalThis.window?.location.origin ?? "http://localhost:3000"
 
-// Vite sets this; in plain Node import.meta.env is undefined, so treat it as prod
 const isDev = import.meta.env?.DEV ?? false
+const ANVIL_RPC_URL =  isDev ? "http://localhost:8545" : null;
 
-// Anvil from docker-compose. The server proxy is read-only (no eth_sendRawTransaction),
-// so the browser talks to Anvil directly to be able to sign and send.
-const ANVIL_RPC_URL = "http://localhost:8545"
-
+export const FUNDED_ETH_PRIVATE_KEYS = isDev ? ["0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80", "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d", "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a", "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6"] : [];
 export const DOCKER_CHAIN_ID = 31337;
 export const SEPOLIA_CHAIN_ID = 11155111;
 

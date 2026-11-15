@@ -72,7 +72,6 @@ Browser ──> https://eth.yourdomain/            (static React build)
 ### 3b. `client/blockchain/provider.js`
 - Keep the `cache` + `staticNetwork` pattern.
 - Consider `{ batchMaxCount: 1 }` to make the proxy simpler.
-- **Move `FUNDED_ETH_PRIVATE_KEYS` out of this module** into a dev-only one (e.g. `devAccounts.js`), and use it only behind `import.meta.env.DEV`. Anvil keys are public, but they shouldn't ship in the prod bundle.
 
 ### 3c. `client/blockchain/walletActions.js`: `sendEthTest`
 - `sepolia` → `fetch("/api/faucet", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ address }) })`, then `provider.waitForTransaction(hash)`

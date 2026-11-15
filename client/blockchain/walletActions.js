@@ -1,7 +1,7 @@
 import { ethers, randomBytes, formatEther, computeAddress, Wallet, Contract } from "ethers";
-import { FUNDED_ETH_PRIVATE_KEYS, getProvider, getBrowserProvider, getActiveNetwork } from "./provider.js";
+import { getProvider, getBrowserProvider, getActiveNetwork } from "./provider.js";
 import { COMMUNITY_COUNTER_ABI, COMMUNITY_COUNTER_ADDRESSES } from "./communityCounter.js";
-import { DOCKER_CHAIN_ID, SEPOLIA_CHAIN_ID } from "./networks.js";
+import { DOCKER_CHAIN_ID, SEPOLIA_CHAIN_ID, FUNDED_ETH_PRIVATE_KEYS } from "./networks.js";
 import axios from "axios";
 
 
